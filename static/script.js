@@ -5,19 +5,25 @@ function checkRisk() {
     .then(res => res.json())
     .then(data => {
 
-        console.log(data); // DEBUG (IMPORTANT)
+        console.log(data);
+
+        document.getElementById("cityName").innerText =
+            "📍 City: " + city;
 
         document.getElementById("temp").innerText =
-            "Temperature: " + data.temperature + " °C";
+            "🌡️ Temperature: " + data.temperature + " °C";
 
         document.getElementById("humidity").innerText =
-            "Humidity: " + data.humidity + " %";
+            "💧 Humidity: " + data.humidity + " %";
 
         document.getElementById("rainfall").innerText =
-            "Rainfall: " + data.rainfall + " mm";
+            "🌧️ Rainfall: " + data.rainfall + " mm";
 
         document.getElementById("risk").innerText =
-            "Risk: " + data.risk;
+            "⚠️ Risk Level: " + data.risk;
+
+        document.getElementById("route").innerText =
+            "🛣️ Safe Route: " + data.safe_route;
     })
     .catch(err => console.log(err));
 }

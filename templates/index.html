@@ -1,45 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>🌧️ Flood Risk System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Flood Risk System</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #eef6ff;
+        }
+
+        .box {
+            background: white;
+            width: 60%;
+            margin: auto;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        input {
+            padding: 10px;
+            width: 60%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .section {
+            margin-top: 15px;
+        }
+    </style>
 </head>
 
 <body>
 
-    <div class="container">
+<div class="box">
 
-        <h1>🌧️ Flood Risk System</h1>
+    <h1>🌧️ Flood Risk System</h1>
 
-        <!-- Input -->
-        <input type="text" id="city" placeholder="Enter city (e.g. Chennai)">
-        <button onclick="checkRisk()">Check</button>
+    <input id="city" placeholder="Enter city">
+    <button onclick="checkRisk()">Check</button>
 
-        <hr>
+    <h3 id="cityName"></h3>
 
-        <!-- Results -->
-        <h3 id="resultCity"></h3>
+    <div class="section" id="temp"></div>
+    <div class="section" id="humidity"></div>
+    <div class="section" id="rainfall"></div>
+    <div class="section" id="risk"></div>
+    <div class="section" id="route"></div>
 
-        <p id="temp">Temperature: --</p>
-        <p id="humidity">Humidity: --</p>
-        <p id="rainfall">Rainfall: --</p>
-        <p id="risk">Risk: --</p>
+    <hr>
 
-        <hr>
+    <h3>🚀 Future Improvements</h3>
+    <ul>
+        <li>Google Maps visualization</li>
+        <li>AI-based prediction model</li>
+        <li>SMS alerts for high-risk zones</li>
+        <li>Historical rainfall analysis</li>
+        <li>Real-time disaster monitoring</li>
+    </ul>
 
-        <!-- Future Improvements -->
-        <h3>🚀 Future Improvements</h3>
-        <ul>
-            <li>Add Google Maps visualization</li>
-            <li>Improve AI-based prediction model</li>
-            <li>Add SMS alerts for high-risk zones</li>
-            <li>Include historical rainfall analysis</li>
-        </ul>
+</div>
 
-    </div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 </html>
