@@ -4,9 +4,11 @@ import os
 
 app = Flask(__name__)
 
-API_KEY = os.getenv("OPENWEATHER_API_KEY")
+# ✅ Safe API key handling
+API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 
-# -------- ADVANCED RISK MODEL --------
+
+# -------- RISK MODEL --------
 def predict_risk(temp, humidity, rain):
     score = 0
 
@@ -42,44 +44,53 @@ def safe_route(risk):
         return "Route A (Safe Elevated Route 🟢)"
 
 
+# -------- HOME PAGE --------
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# -------- WEATHER API --------
 @app.route("/weather")
 def weather():
     city = request.args.get("city")
 
-    geo = requests.get(
-        f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={API_KEY}"
-    ).json()
+    if not city:
+        return jsonify({"error": "City is required"})
 
-    if not geo:
+    if not API_KEY:
+        return jsonify({"error": "API key missing (set OPENWEATHER_API_KEY in Render)"})
+
+    # Geo API
+    geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={API_KEY}"
+    geo_data = requests.get(geo_url).json()
+
+    if not geo_data:
         return jsonify({"error": "City not found"})
 
-    lat = geo[0]["lat"]
-    lon = geo[0]["lon"]
+    lat = geo_data[0]["lat"]
+    lon = geo_data[0]["lon"]
 
-    data = requests.get(
-        f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
-    ).json()
+    # Weather API
+    weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
+    data = requests.get(weather_url).json()
 
-    temp = data["main"]["temp"]
-    humidity = data["main"]["humidity"]
+    temp = data.get("main", {}).get("temp", 0)
+    humidity = data.get("main", {}).get("humidity", 0)
     rain = data.get("rain", {}).get("1h", 0)
 
     risk = predict_risk(temp, humidity, rain)
+    route = safe_route(risk)
 
     return jsonify({
         "city": city,
-        "lat": lat,
-        "lon": lon,
-        "temp": temp,
+        "temperature": temp,
         "humidity": humidity,
         "rainfall": rain,
         "risk": risk,
-        "route": safe_route(risk)
+        "route": route,
+        "lat": lat,
+        "lon": lon
     })
 
 
