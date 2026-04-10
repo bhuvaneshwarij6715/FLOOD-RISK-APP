@@ -1,44 +1,23 @@
-let map;
-let marker;
-
-function getCity() {
+function checkRisk() {
     let city = document.getElementById("city").value;
 
-    fetch(`/city?name=${city}`)
+    fetch(`/get_weather?city=${city}`)
     .then(res => res.json())
     .then(data => {
-        loadWeather(data.lat, data.lon);
-    });
-}
 
-function loadWeather(lat, lon) {
+        console.log(data); // DEBUG (IMPORTANT)
 
-    fetch("/weather", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ lat, lon })
+        document.getElementById("temp").innerText =
+            "Temperature: " + data.temperature + " °C";
+
+        document.getElementById("humidity").innerText =
+            "Humidity: " + data.humidity + " %";
+
+        document.getElementById("rainfall").innerText =
+            "Rainfall: " + data.rainfall + " mm";
+
+        document.getElementById("risk").innerText =
+            "Risk: " + data.risk;
     })
-    .then(res => res.json())
-    .then(data => {
-
-        document.getElementById("rainfall").innerText = data.rainfall;
-        document.getElementById("risk").innerText = data.risk;
-
-        showMap(lat, lon);
-    });
-}
-
-function showMap(lat, lon) {
-
-    let location = { lat: lat, lng: lon };
-
-    map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 10,
-        center: location
-    });
-
-    marker = new google.maps.Marker({
-        position: location,
-        map: map
-    });
+    .catch(err => console.log(err));
 }

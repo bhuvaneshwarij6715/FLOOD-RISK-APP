@@ -1,28 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Flood Risk App</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>🌧️ Flood Risk System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<h2>🌧️ Flood Risk System</h2>
+    <div class="container">
 
-<input id="city" placeholder="Enter city">
-<button onclick="getCity()">Check</button>
+        <h1>🌧️ Flood Risk System</h1>
 
-<div>
-    <h3>Rainfall: <span id="rainfall"></span> mm</h3>
-    <h3>Risk: <span id="risk"></span></h3>
-</div>
+        <!-- Input -->
+        <input type="text" id="city" placeholder="Enter city (e.g. Chennai)">
+        <button onclick="checkRisk()">Check</button>
 
-<div id="map"></div>
+        <hr>
 
-<script src="/static/script.js"></script>
+        <!-- Results -->
+        <h3 id="resultCity"></h3>
 
-<!-- GOOGLE MAPS (ONLY KEY HERE) -->
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+        <p id="temp">Temperature: --</p>
+        <p id="humidity">Humidity: --</p>
+        <p id="rainfall">Rainfall: --</p>
+        <p id="risk">Risk: --</p>
+
+        <hr>
+
+        <!-- Future Improvements -->
+        <h3>🚀 Future Improvements</h3>
+        <ul>
+            <li>Add Google Maps visualization</li>
+            <li>Improve AI-based prediction model</li>
+            <li>Add SMS alerts for high-risk zones</li>
+            <li>Include historical rainfall analysis</li>
+        </ul>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 </html>
