@@ -10,20 +10,27 @@ API_KEY = os.getenv("OPENWEATHER_API_KEY")
 def predict_risk(temp, humidity, rain):
     score = 0
 
-    if rain > 80: score += 3
-    elif rain > 40: score += 2
-    elif rain > 10: score += 1
+    if rain > 80:
+        score += 3
+    elif rain > 40:
+        score += 2
+    elif rain > 10:
+        score += 1
 
-    if humidity > 85: score += 2
-    elif humidity > 60: score += 1
+    if humidity > 85:
+        score += 2
+    elif humidity > 60:
+        score += 1
 
-    if temp < 20: score += 1
+    if temp < 20:
+        score += 1
 
     if score >= 5:
         return "High"
     elif score >= 3:
         return "Medium"
-    return "Low"
+    else:
+        return "Low"
 
 
 def safe_route(risk):
@@ -31,7 +38,8 @@ def safe_route(risk):
         return "Route C (Avoid Low Lands ⚠️)"
     elif risk == "Medium":
         return "Route B (Caution Required 🟠)"
-    return "Route A (Safe Elevated Route 🟢)"
+    else:
+        return "Route A (Safe Elevated Route 🟢)"
 
 
 @app.route("/")
