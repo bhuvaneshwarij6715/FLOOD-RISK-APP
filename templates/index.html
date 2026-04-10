@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flood Risk App</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h2>🌧️ Flood Risk System</h2>
+
+<input id="city" placeholder="Enter city">
+<button onclick="getCity()">Check</button>
+
+<div>
+    <h3>Rainfall: <span id="rainfall"></span> mm</h3>
+    <h3>Risk: <span id="risk"></span></h3>
+</div>
+
+<div id="map"></div>
+
+<script src="/static/script.js"></script>
+
+<!-- GOOGLE MAPS (ONLY KEY HERE) -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+
+</body>
+</html>
