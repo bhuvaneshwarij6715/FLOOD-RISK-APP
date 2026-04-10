@@ -1,29 +1,42 @@
-function checkRisk() {
-    let city = document.getElementById("city").value;
+let map;
 
-    fetch(`/get_weather?city=${city}`)
+function check() {
+  let city = document.getElementById("city").value;
+
+  fetch(`/weather?city=${city}`)
     .then(res => res.json())
     .then(data => {
 
-        console.log(data);
+      if (data.error) {
+        alert("City not found");
+        return;
+      }
 
-        document.getElementById("cityName").innerText =
-            "📍 City: " + city;
+      document.getElementById("cityName").innerText = city;
+      document.getElementById("temp").innerText = data.temp + " °C";
+      document.getElementById("humidity").innerText = data.humidity + " %";
+      document.getElementById("rain").innerText = data.rainfall + " mm";
+      document.getElementById("risk").innerText = data.risk;
+      document.getElementById("route").innerText = data.route;
 
-        document.getElementById("temp").innerText =
-            "🌡️ Temperature: " + data.temperature + " °C";
+      loadMap(data.lat, data.lon);
+    });
+}
 
-        document.getElementById("humidity").innerText =
-            "💧 Humidity: " + data.humidity + " %";
+function loadMap(lat, lon) {
+  let location = { lat: lat, lng: lon };
 
-        document.getElementById("rainfall").innerText =
-            "🌧️ Rainfall: " + data.rainfall + " mm";
+  if (!map) {
+    map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 10,
+      center: location
+    });
+  }
 
-        document.getElementById("risk").innerText =
-            "⚠️ Risk Level: " + data.risk;
+  new google.maps.Marker({
+    position: location,
+    map: map
+  });
 
-        document.getElementById("route").innerText =
-            "🛣️ Safe Route: " + data.safe_route;
-    })
-    .catch(err => console.log(err));
+  map.setCenter(location);
 }

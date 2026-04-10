@@ -4,50 +4,74 @@ import os
 
 app = Flask(__name__)
 
-API_KEY = os.environ.get("OPENWEATHER_API")
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
+
+# -------- ADVANCED RISK MODEL --------
+def predict_risk(temp, humidity, rain):
+    score = 0
+
+    if rain > 80: score += 3
+    elif rain > 40: score += 2
+    elif rain > 10: score += 1
+
+    if humidity > 85: score += 2
+    elif humidity > 60: score += 1
+
+    if temp < 20: score += 1
+
+    if score >= 5:
+        return "High"
+    elif score >= 3:
+        return "Medium"
+    return "Low"
+
+
+def safe_route(risk):
+    if risk == "High":
+        return "Route C (Avoid Low Lands ⚠️)"
+    elif risk == "Medium":
+        return "Route B (Caution Required 🟠)"
+    return "Route A (Safe Elevated Route 🟢)"
+
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
-@app.route("/get_weather")
-def get_weather():
+@app.route("/weather")
+def weather():
     city = request.args.get("city")
 
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
-    res = requests.get(url)
-    data = res.json()
+    geo = requests.get(
+        f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={API_KEY}"
+    ).json()
 
-    temp = data.get("main", {}).get("temp", 0)
-    humidity = data.get("main", {}).get("humidity", 0)
+    if not geo:
+        return jsonify({"error": "City not found"})
 
-    rainfall = 0
-    if "rain" in data and "1h" in data["rain"]:
-        rainfall = data["rain"]["1h"]
+    lat = geo[0]["lat"]
+    lon = geo[0]["lon"]
 
-    # RISK LOGIC
-    if rainfall < 2:
-        risk = "Low"
-    elif rainfall < 10:
-        risk = "Medium"
-    else:
-        risk = "High"
+    data = requests.get(
+        f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
+    ).json()
 
-    # SAFE ROUTE LOGIC (simple demo logic)
-    safe_route = "Route A (Elevated Path) - Safe to travel"
+    temp = data["main"]["temp"]
+    humidity = data["main"]["humidity"]
+    rain = data.get("rain", {}).get("1h", 0)
 
-    if risk == "High":
-        safe_route = "Avoid travel - Flood-prone area detected"
-    elif risk == "Medium":
-        safe_route = "Use Highway Route - Caution advised"
+    risk = predict_risk(temp, humidity, rain)
 
     return jsonify({
-        "temperature": temp,
+        "city": city,
+        "lat": lat,
+        "lon": lon,
+        "temp": temp,
         "humidity": humidity,
-        "rainfall": rainfall,
+        "rainfall": rain,
         "risk": risk,
-        "safe_route": safe_route
+        "route": safe_route(risk)
     })
 
 
